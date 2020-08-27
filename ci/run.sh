@@ -8,8 +8,8 @@ then
     sed -i 's/__tag__ = ""/__tag__ = "'${TRAVIS_TAG}'"/g' binalyzer_wasm/__init__.py
     sed -i 's/__tag__ = ""/__tag__ = "'${TRAVIS_TAG}'"/g' setup.py
 else
-    sed -i 's/__tag__ = ""/__tag__ = "'0.0.13a${TRAVIS_BUILD_NUMBER}'"/g' binalyzer_wasm/__init__.py
-    sed -i 's/__tag__ = ""/__tag__ = "'0.0.13a${TRAVIS_BUILD_NUMBER}'"/g' setup.py
+    sed -i 's/__tag__ = ""/__tag__ = "'0.0.0a${TRAVIS_BUILD_NUMBER}'"/g' binalyzer_wasm/__init__.py
+    sed -i 's/__tag__ = ""/__tag__ = "'0.0.0a${TRAVIS_BUILD_NUMBER}'"/g' setup.py
 fi
 
 if [ ! -z "$TRAVIS_BUILD_NUMBER" ]
