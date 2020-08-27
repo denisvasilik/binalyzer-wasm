@@ -1,2 +1,1 @@
-# binalyzer-wasm
-Binalyzer WebAssembly Extension
+# Binalyzer WebAssembly Extension

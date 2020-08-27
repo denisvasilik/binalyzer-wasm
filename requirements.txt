@@ -1,0 +1,10 @@
+Sphinx
+python-docs-theme
+pylint
+pyflakes
+pytest
+pytest-cov
+devpi-client
+virtualenv
+binalyzer
+leb128>=1.0.2
