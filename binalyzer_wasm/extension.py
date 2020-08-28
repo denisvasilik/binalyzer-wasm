@@ -12,6 +12,7 @@ from .wasm import (
     LEB128SizeBindingValueProvider,
     LEB128UnsignedValueConverter,
     LEB128UnsignedBindingValueProvider,
+    LimitsSizeBindingValueProvider,
 )
 
 
@@ -35,4 +36,7 @@ class WebAssemblyExtension(BinalyzerExtension):
         )
 
     def limits(self, template):
-        raise RuntimeError('Not implemented')
+        return (
+            IdentityValueConverter(),
+            LimitsSizeBindingValueProvider(template),
+        )
