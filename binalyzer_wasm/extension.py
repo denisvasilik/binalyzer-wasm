@@ -13,6 +13,7 @@ from .wasm import (
     LEB128UnsignedValueConverter,
     LEB128UnsignedBindingValueProvider,
     LimitsSizeBindingValueProvider,
+    ExpressionSizeValueProvider,
 )
 
 
@@ -39,4 +40,10 @@ class WebAssemblyExtension(BinalyzerExtension):
         return (
             IdentityValueConverter(),
             LimitsSizeBindingValueProvider(template),
+        )
+
+    def expr_size(self, template):
+        return (
+            IdentityValueConverter(),
+            ExpressionSizeValueProvider(template),
         )

@@ -105,6 +105,30 @@ class LimitsSizeBindingValueProvider(ValueProviderBase):
         raise RuntimeError('Not implemented, yet.')
 
 
+class ExpressionSizeValueProvider(ValueProviderBase):
+
+    def __init__(self, template=None):
+        self.template = template
+        self._cached_value = None
+
+    def get_value(self):
+        if not self._cached_value is None:
+            return self._cached_value
+        data = self.template.binding_context.data_provider.data
+        absolute_address = self.template.absolute_address
+        data.seek(absolute_address)
+        value = int.from_bytes(data.read(1), 'little')
+        size = 1
+        while(value != 0x0B):
+            value = int.from_bytes(data.read(1), 'little')
+            size += 1
+        self._cached_value = size
+        return self._cached_value
+
+    def set_value(self, value):
+        raise RuntimeError('Not implemented, yet.')
+
+
 def _get_leb128size(data):
     size = 1
     byte_value = int.from_bytes(data.read(1), 'little')
