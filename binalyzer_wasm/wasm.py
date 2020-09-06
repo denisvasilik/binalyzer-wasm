@@ -89,7 +89,7 @@ class LimitsSizeBindingValueProvider(ValueProviderBase):
         data = self.template.binding_context.data_provider.data
         absolute_address = self.template.absolute_address
         data.seek(absolute_address)
-        flag = data.read(0)
+        flag = int.from_bytes(data.read(1), 'little')
         size = 1
         if flag == 0x00:
             size += _get_leb128size(data)
