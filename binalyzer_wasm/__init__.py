@@ -18,7 +18,7 @@ __commit__ = "0000000"
 
 from .extension import WebAssemblyExtension
 from .wasm import (
-    LEB128UnsignedValueConverter,
+    LEB128UnsignedValueProvider,
     LEB128UnsignedBindingValueProvider,
     LEB128SizeBindingValueProvider,
 )

@@ -4,16 +4,15 @@
 
     This module implements the Binalyzer WebAssembly extension.
 """
-from binalyzer_core import (
-    BinalyzerExtension,
-    IdentityValueConverter,
-)
+from binalyzer_core import BinalyzerExtension
 from .wasm import (
     LEB128SizeBindingValueProvider,
-    LEB128UnsignedValueConverter,
+    LEB128UnsignedValueProvider,
     LEB128UnsignedBindingValueProvider,
     LimitsSizeBindingValueProvider,
     ExpressionSizeValueProvider,
+    PacketRecordCountValueProvider,
+    RepetitionCountValueProvider,
 )
 
 
@@ -25,25 +24,19 @@ class WebAssemblyExtension(BinalyzerExtension):
         super(WebAssemblyExtension, self).init_extension()
 
     def leb128size(self, template):
-        return (
-            IdentityValueConverter(),
-            LEB128SizeBindingValueProvider(template),
-        )
+        return LEB128SizeBindingValueProvider(template)
 
     def leb128u(self, template):
-        return (
-            LEB128UnsignedValueConverter(),
-            LEB128UnsignedBindingValueProvider(template),
-        )
+        return LEB128UnsignedBindingValueProvider(template)
 
     def limits(self, template):
-        return (
-            IdentityValueConverter(),
-            LimitsSizeBindingValueProvider(template),
-        )
+        return LimitsSizeBindingValueProvider(template)
 
     def expr_size(self, template):
-        return (
-            IdentityValueConverter(),
-            ExpressionSizeValueProvider(template),
-        )
+        return ExpressionSizeValueProvider(template)
+
+    def packet_record_count(self, template):
+        return RepetitionCountValueProvider(template)
+
+    def repeat(self, template):
+        return RepetitionCountValueProvider(template)

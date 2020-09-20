@@ -1,7 +1,7 @@
 # Binalyzer WebAssembly Extension
 
 This repository provides the WebAssembly extension for [Binalyzer]. It implements
-value converters and providers (e.g. for LEB128) that are used to parse WebAssembly's
+value providers (e.g. for LEB128) that are used to parse WebAssembly's
 binary module format. It is part of the overall [Binalyzer] project and comes with
 its installation.
 
