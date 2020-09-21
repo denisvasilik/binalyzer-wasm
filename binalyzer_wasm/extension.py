@@ -10,8 +10,6 @@ from .wasm import (
     LEB128UnsignedBindingValueProvider,
     LimitsSizeBindingValueProvider,
     ExpressionSizeValueProvider,
-    PacketRecordCountValueProvider,
-    RepetitionCountValueProvider,
 )
 
 
@@ -33,9 +31,3 @@ class WebAssemblyExtension(BinalyzerExtension):
 
     def expr_size(self, property):
         return ExpressionSizeValueProvider(property)
-
-    def packet_record_count(self, property):
-        return RepetitionCountValueProvider(property)
-
-    def repeat(self, property):
-        return RepetitionCountValueProvider(property)
