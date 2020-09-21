@@ -17,30 +17,22 @@ from binalyzer_core import (
 )
 
 
-class LEB128UnsignedValueProvider(object):
-    def convert(self, value, template):
-        return leb128.u.decode(value)
-
-    def convert_back(self, value, template):
-        return leb128.u.encode(value)
-
-
 class LEB128UnsignedBindingValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(LEB128UnsignedBindingValueProvider, self).__init__(property)
 
     def get_value(self):
         if not self._cached_value is None:
             return self._cached_value
-        data = self.template.binding_context.data_provider.data
-        absolute_address = self.template.absolute_address
+        data = self.property.template.binding_context.data_provider.data
+        absolute_address = self.property.template.absolute_address
         data.seek(absolute_address)
         size = _get_leb128size(data)
         data.seek(absolute_address)
         leb128_value = list(data.read(size))
-        leb128_value.reverse()
-        self._cached_value = int.from_bytes(bytes(leb128_value), 'little')
+        leb128_bytes = bytes(leb128_value)
+        self._cached_value = leb128.u.decode(leb128_bytes)
         return self._cached_value
 
     def set_value(self, value):
@@ -48,15 +40,16 @@ class LEB128UnsignedBindingValueProvider(ValueProviderBase):
 
 
 class LEB128SizeBindingValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(LEB128SizeBindingValueProvider, self).__init__(property)
 
     def get_value(self):
         if not self._cached_value is None:
             return self._cached_value
-        data = self.template.binding_context.data_provider.data
-        absolute_address = self.template.absolute_address
+        template = self.property.template
+        data = template.binding_context.data_provider.data
+        absolute_address = template.absolute_address
         data.seek(absolute_address)
         self._cached_value = _get_leb128size(data)
         return self._cached_value
@@ -65,24 +58,17 @@ class LEB128SizeBindingValueProvider(ValueProviderBase):
         raise RuntimeError("Not implemented, yet.")
 
 
-class LEB128UnsignedBindingProperty(PropertyBase):
-    def __init__(self, template):
-        super(LEB128UnsignedBindingProperty, self).__init(
-            template=template,
-            value_provider=LEB128UnsignedBindingValueProvider(template),
-        )
-
-
 class LimitsSizeBindingValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(LimitsSizeBindingValueProvider, self).__init__(property)
 
     def get_value(self):
         if not self._cached_value is None:
             return self._cached_value
-        data = self.template.binding_context.data_provider.data
-        absolute_address = self.template.absolute_address
+        template = self.property.template
+        data = template.binding_context.data_provider.data
+        absolute_address = template.absolute_address
         data.seek(absolute_address)
         flag = int.from_bytes(data.read(1), "little")
         size = 1
@@ -101,15 +87,16 @@ class LimitsSizeBindingValueProvider(ValueProviderBase):
 
 
 class ExpressionSizeValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(ExpressionSizeValueProvider, self).__init__(property)
 
     def get_value(self):
         if not self._cached_value is None:
             return self._cached_value
-        data = self.template.binding_context.data_provider.data
-        absolute_address = self.template.absolute_address
+        template = self.property.template
+        data = template.binding_context.data_provider.data
+        absolute_address = template.absolute_address
         data.seek(absolute_address)
         value = int.from_bytes(data.read(1), "little")
         size = 1
@@ -133,15 +120,16 @@ def _get_leb128size(data):
 
 
 class PacketRecordCountValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(PacketRecordCountValueProvider, self).__init__(property)
 
     def get_value(self):
         if not self._cached_value is None:
             return self._cached_value
-        data = self.template.binding_context.data_provider.data
-        packet_record_address = self.template.absolute_address
+        template = self.property.template
+        data = template.binding_context.data_provider.data
+        packet_record_address = template.absolute_address
         packet_record_count = 0
         total_size = 0
         total_size = data.seek(0, 2)
@@ -159,15 +147,15 @@ class PacketRecordCountValueProvider(ValueProviderBase):
 
 
 class RepetitionCountValueProvider(ValueProviderBase):
-    def __init__(self, template=None):
-        self.template = template
+    def __init__(self, property):
         self._cached_value = None
+        super(RepetitionCountValueProvider, self).__init__(property)
 
     def get_value(self):
-        template = TemplateFactory().clone(self.template)
-        template.binding_context = self.template.binding_context
-        total_data_size = self.template.binding_context.data.seek(0, 2)
-        packet_record_address = self.template.absolute_address
+        template = TemplateFactory().clone(self.property.template)
+        template.binding_context = self.property.template.binding_context
+        total_data_size = self.property.template.binding_context.data.seek(0, 2)
+        packet_record_address = self.property.template.absolute_address
         packet_record_count = 0
         while True:
             if packet_record_address >= total_data_size:

@@ -7,7 +7,6 @@
 from binalyzer_core import BinalyzerExtension
 from .wasm import (
     LEB128SizeBindingValueProvider,
-    LEB128UnsignedValueProvider,
     LEB128UnsignedBindingValueProvider,
     LimitsSizeBindingValueProvider,
     ExpressionSizeValueProvider,
@@ -23,20 +22,20 @@ class WebAssemblyExtension(BinalyzerExtension):
     def init_extension(self):
         super(WebAssemblyExtension, self).init_extension()
 
-    def leb128size(self, template):
-        return LEB128SizeBindingValueProvider(template)
+    def leb128size(self, property):
+        return LEB128SizeBindingValueProvider(property)
 
-    def leb128u(self, template):
-        return LEB128UnsignedBindingValueProvider(template)
+    def leb128u(self, property):
+        return LEB128UnsignedBindingValueProvider(property)
 
-    def limits(self, template):
-        return LimitsSizeBindingValueProvider(template)
+    def limits(self, property):
+        return LimitsSizeBindingValueProvider(property)
 
-    def expr_size(self, template):
-        return ExpressionSizeValueProvider(template)
+    def expr_size(self, property):
+        return ExpressionSizeValueProvider(property)
 
-    def packet_record_count(self, template):
-        return RepetitionCountValueProvider(template)
+    def packet_record_count(self, property):
+        return RepetitionCountValueProvider(property)
 
-    def repeat(self, template):
-        return RepetitionCountValueProvider(template)
+    def repeat(self, property):
+        return RepetitionCountValueProvider(property)
