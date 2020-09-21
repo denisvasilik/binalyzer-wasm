@@ -14,17 +14,16 @@ from binalyzer_core import (
     ValueProviderBase,
     PropertyBase,
     TemplateFactory,
+    value_cache,
 )
 
 
 class LEB128UnsignedBindingValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(LEB128UnsignedBindingValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
-        if not self._cached_value is None:
-            return self._cached_value
         data = self.property.template.binding_context.data_provider.data
         absolute_address = self.property.template.absolute_address
         data.seek(absolute_address)
@@ -32,8 +31,7 @@ class LEB128UnsignedBindingValueProvider(ValueProviderBase):
         data.seek(absolute_address)
         leb128_value = list(data.read(size))
         leb128_bytes = bytes(leb128_value)
-        self._cached_value = leb128.u.decode(leb128_bytes)
-        return self._cached_value
+        return leb128.u.decode(leb128_bytes)
 
     def set_value(self, value):
         raise RuntimeError("Not implemented, yet.")
@@ -41,18 +39,15 @@ class LEB128UnsignedBindingValueProvider(ValueProviderBase):
 
 class LEB128SizeBindingValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(LEB128SizeBindingValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
-        if not self._cached_value is None:
-            return self._cached_value
         template = self.property.template
         data = template.binding_context.data_provider.data
         absolute_address = template.absolute_address
         data.seek(absolute_address)
-        self._cached_value = _get_leb128size(data)
-        return self._cached_value
+        return _get_leb128size(data)
 
     def set_value(self, value):
         raise RuntimeError("Not implemented, yet.")
@@ -60,12 +55,10 @@ class LEB128SizeBindingValueProvider(ValueProviderBase):
 
 class LimitsSizeBindingValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(LimitsSizeBindingValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
-        if not self._cached_value is None:
-            return self._cached_value
         template = self.property.template
         data = template.binding_context.data_provider.data
         absolute_address = template.absolute_address
@@ -79,8 +72,7 @@ class LimitsSizeBindingValueProvider(ValueProviderBase):
             size += _get_leb128size(data)
         else:
             raise RuntimeError("Invalid value")
-        self._cached_value = size
-        return self._cached_value
+        return size
 
     def set_value(self, value):
         raise RuntimeError("Not implemented, yet.")
@@ -88,12 +80,10 @@ class LimitsSizeBindingValueProvider(ValueProviderBase):
 
 class ExpressionSizeValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(ExpressionSizeValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
-        if not self._cached_value is None:
-            return self._cached_value
         template = self.property.template
         data = template.binding_context.data_provider.data
         absolute_address = template.absolute_address
@@ -103,8 +93,7 @@ class ExpressionSizeValueProvider(ValueProviderBase):
         while value != 0x0B:
             value = int.from_bytes(data.read(1), "little")
             size += 1
-        self._cached_value = size
-        return self._cached_value
+        return size
 
     def set_value(self, value):
         raise RuntimeError("Not implemented, yet.")
@@ -121,12 +110,10 @@ def _get_leb128size(data):
 
 class PacketRecordCountValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(PacketRecordCountValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
-        if not self._cached_value is None:
-            return self._cached_value
         template = self.property.template
         data = template.binding_context.data_provider.data
         packet_record_address = template.absolute_address
@@ -142,19 +129,19 @@ class PacketRecordCountValueProvider(ValueProviderBase):
             data.seek(packet_record_address)
             packet_data_length = int.from_bytes(data.read(4), "little")
             packet_record_address += packet_data_length + 4
-        self._cached_value = packet_record_count
-        return self._cached_value
+        return packet_record_count
 
 
 class RepetitionCountValueProvider(ValueProviderBase):
     def __init__(self, property):
-        self._cached_value = None
         super(RepetitionCountValueProvider, self).__init__(property)
 
+    @value_cache
     def get_value(self):
         template = TemplateFactory().clone(self.property.template)
         template.binding_context = self.property.template.binding_context
-        total_data_size = self.property.template.binding_context.data.seek(0, 2)
+        total_data_size = self.property.template.binding_context.data.seek(
+            0, 2)
         packet_record_address = self.property.template.absolute_address
         packet_record_count = 0
         while True:
