@@ -12,7 +12,7 @@ setuptools.setup(
     version=__version__,
     author="Denis Vasilìk",
     author_email="contact@denisvasilik.com",
-    url="https://www.denisvasilik.com/binalyzer",
+    url="https://binalyzer.denisvasilik.com",
     project_urls={
         "Bug Tracker": "https://github.com/denisvasilik/binalyzer/issues/",
         "Documentation": "https://binalyzer.readthedocs.io/en/latest/",
@@ -24,7 +24,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.6",
-        "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
     ],
     dependency_links=[],
     package_dir={"binalyzer_wasm": "binalyzer_wasm"},
